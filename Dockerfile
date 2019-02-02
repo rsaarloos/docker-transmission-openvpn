@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-MAINTAINER Kristian Haugene
+MAINTAINER Rogier Saarloos
 
 VOLUME /data
 VOLUME /config
@@ -14,6 +14,7 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y sudo transmission-cli transmission-common transmission-daemon curl rar unrar zip unzip ufw iputils-ping openvpn bc\
     python2.7 python2.7-pysqlite2 && ln -sf /usr/bin/python2.7 /usr/bin/python2 \
+    && apt-get install -y sabnzbdplus \
     && wget https://github.com/Secretmapper/combustion/archive/release.zip \
     && unzip release.zip -d /opt/transmission-ui/ \
     && rm release.zip \
@@ -34,7 +35,9 @@ RUN apt-get update \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && groupmod -g 1000 users \
     && useradd -u 911 -U -d /config -s /bin/false abc \
-    && usermod -G users abc
+    && usermod -G users abc \
+    && printf "USER=root\nHOST=0.0.0.0\nPORT=8081\nCONFIG=/config/sabnzbd-home\n" > /etc/default/sabnzbdplus \
+    && /etc/init.d/sabnzbdplus start
 
 ADD openvpn/ /etc/openvpn/
 ADD transmission/ /etc/transmission/
@@ -133,5 +136,6 @@ ENV OPENVPN_USERNAME=**None** \
 
 # Expose port and run
 EXPOSE 9091
+EXPOSE 8081
 EXPOSE 8888
 CMD ["dumb-init", "/etc/openvpn/start.sh"]
