@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 MAINTAINER Rogier Saarloos
 
-VOLUME /data
+VOLUME /downloads
 VOLUME /config
 
 # Update packages and install software
@@ -9,6 +9,7 @@ RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get -y install software-properties-common wget git curl jq \
     && add-apt-repository ppa:transmissionbt/ppa \
+    && add-apt-repository ppa:jcfp/ppa \
     && wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add - \
     && echo "deb http://build.openvpn.net/debian/openvpn/stable xenial main" > /etc/apt/sources.list.d/openvpn-aptrepo.list \
     && apt-get update \
@@ -36,11 +37,12 @@ RUN apt-get update \
     && groupmod -g 1000 users \
     && useradd -u 911 -U -d /config -s /bin/false abc \
     && usermod -G users abc \
-    && printf "USER=root\nHOST=0.0.0.0\nPORT=8081\nCONFIG=/config/sabnzbd-home\n" > /etc/default/sabnzbdplus \
+    && printf "USER=root\nHOST=0.0.0.0\nPORT=8080\nCONFIG=/config/sabnzbd-home\n" > /etc/default/sabnzbdplus \
     && /etc/init.d/sabnzbdplus start
 
 ADD openvpn/ /etc/openvpn/
 ADD transmission/ /etc/transmission/
+ADD sabnzbd/ /etc/sabnzbd/
 ADD tinyproxy /opt/tinyproxy/
 
 ENV OPENVPN_USERNAME=**None** \
@@ -60,7 +62,7 @@ ENV OPENVPN_USERNAME=**None** \
     TRANSMISSION_BLOCKLIST_URL=http://www.example.com/blocklist \
     TRANSMISSION_CACHE_SIZE_MB=4 \
     TRANSMISSION_DHT_ENABLED=true \
-    TRANSMISSION_DOWNLOAD_DIR=/data/completed \
+    TRANSMISSION_DOWNLOAD_DIR=/downloads/complete \
     TRANSMISSION_DOWNLOAD_LIMIT=100 \
     TRANSMISSION_DOWNLOAD_LIMIT_ENABLED=0 \
     TRANSMISSION_DOWNLOAD_QUEUE_ENABLED=true \
@@ -68,7 +70,7 @@ ENV OPENVPN_USERNAME=**None** \
     TRANSMISSION_ENCRYPTION=1 \
     TRANSMISSION_IDLE_SEEDING_LIMIT=30 \
     TRANSMISSION_IDLE_SEEDING_LIMIT_ENABLED=false \
-    TRANSMISSION_INCOMPLETE_DIR=/data/incomplete \
+    TRANSMISSION_INCOMPLETE_DIR=/downloads/incomplete \
     TRANSMISSION_INCOMPLETE_DIR_ENABLED=true \
     TRANSMISSION_LPD_ENABLED=false \
     TRANSMISSION_MAX_PEERS_GLOBAL=200 \
@@ -120,13 +122,13 @@ ENV OPENVPN_USERNAME=**None** \
     TRANSMISSION_UTP_ENABLED=true \
     TRANSMISSION_WATCH_DIR=/data/watch \
     TRANSMISSION_WATCH_DIR_ENABLED=true \
-    TRANSMISSION_HOME=/data/transmission-home \
+    TRANSMISSION_HOME=/config/transmission-home \
     TRANSMISSION_WATCH_DIR_FORCE_GENERIC=false \
     ENABLE_UFW=false \
     UFW_ALLOW_GW_NET=false \
     UFW_EXTRA_PORTS= \
     UFW_DISABLE_IPTABLES_REJECT=false \
-    TRANSMISSION_WEB_UI= \
+    TRANSMISSION_WEB_UI=transmission-web-control \
     PUID= \
     PGID= \
     TRANSMISSION_WEB_HOME= \
@@ -136,6 +138,6 @@ ENV OPENVPN_USERNAME=**None** \
 
 # Expose port and run
 EXPOSE 9091
-EXPOSE 8081
+EXPOSE 8080
 EXPOSE 8888
 CMD ["dumb-init", "/etc/openvpn/start.sh"]
