@@ -10,12 +10,15 @@ RUN apt-get update \
     && apt-get -y install software-properties-common wget git curl jq \
     && add-apt-repository ppa:transmissionbt/ppa \
     && add-apt-repository ppa:jcfp/ppa \
+    && add-apt-repository ppa:jcfp/sab-addons \
     && wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add - \
     && echo "deb http://build.openvpn.net/debian/openvpn/stable xenial main" > /etc/apt/sources.list.d/openvpn-aptrepo.list \
     && apt-get update \
     && apt-get install -y sudo transmission-cli transmission-common transmission-daemon curl rar unrar zip unzip ufw iputils-ping openvpn bc\
     python2.7 python2.7-pysqlite2 && ln -sf /usr/bin/python2.7 /usr/bin/python2 \
     && apt-get install -y sabnzbdplus \
+    && apt-get install par2-tbb \
+    && apt-get install speedtest-cli
     && wget https://github.com/Secretmapper/combustion/archive/release.zip \
     && unzip release.zip -d /opt/transmission-ui/ \
     && rm release.zip \
@@ -91,7 +94,7 @@ ENV OPENVPN_USERNAME=**None** \
     TRANSMISSION_QUEUE_STALLED_ENABLED=true \
     TRANSMISSION_QUEUE_STALLED_MINUTES=30 \
     TRANSMISSION_RATIO_LIMIT=0 \
-    TRANSMISSION_RATIO_LIMIT_ENABLED=false \
+    TRANSMISSION_RATIO_LIMIT_ENABLED=true \
     TRANSMISSION_RENAME_PARTIAL_FILES=true \
     TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=false \
     TRANSMISSION_RPC_BIND_ADDRESS=0.0.0.0 \
