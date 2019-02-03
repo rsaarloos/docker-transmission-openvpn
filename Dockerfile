@@ -19,6 +19,8 @@ RUN apt-get update \
     && apt-get install -y sabnzbdplus \
     && apt-get install -y par2-tbb \
     && apt-get install -y python-sabyenc \
+    && apt-get install -y locales \
+    && locale-gen en_US.UTF-8 \
     && apt-get install speedtest-cli \
     && wget https://github.com/Secretmapper/combustion/archive/release.zip \
     && unzip release.zip -d /opt/transmission-ui/ \
