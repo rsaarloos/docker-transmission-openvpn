@@ -18,6 +18,7 @@ RUN apt-get update \
     python2.7 python2.7-pysqlite2 && ln -sf /usr/bin/python2.7 /usr/bin/python2 \
     && apt-get install -y sabnzbdplus \
     && apt-get install -y par2-tbb \
+    && apt-get install -y python-sabyenc \
     && apt-get install speedtest-cli \
     && wget https://github.com/Secretmapper/combustion/archive/release.zip \
     && unzip release.zip -d /opt/transmission-ui/ \
